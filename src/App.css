@@ -1,0 +1,48 @@
+html, body {
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  position: relative;
+  padding-bottom: 150px;
+}
+
+.homepage {
+  padding: 50px 0;
+  background-image: url('/public/bg.jpeg');
+  background-size: cover;
+  margin-top: -20px;
+  margin-bottom: -50px;
+  min-height: calc(100vh - 100px - 50px);
+}
+
+.homepage .container {
+  background-color: rgba(255, 255, 255, .7);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pageHeader {
+  z-index: 10;
+}
+
+.pageFooter {
+  z-index: 10;
+  padding: 10px 0;
+  height: 100px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid #ddd;
+  background-color: #eee;
+  text-align: center;
+}
+
+.card {
+  padding: 20px 0;
+  border-bottom: 1px solid #eee;
+  width: 50%;
+  float: left;
+}
