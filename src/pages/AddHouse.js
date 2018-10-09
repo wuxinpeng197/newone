@@ -78,7 +78,7 @@ export default class AddHouse extends PureComponent {
               <h1>Add House</h1>
               <br/>
               <div className="form-group">
-                <label htmlFor="inputName">Name</label>
+                <label htmlFor="inputName">Title</label>
                 <input type="text" className="form-control" id="inputName"
                        value={this.state.name} onChange={this.onNameChange} required/>
               </div>
@@ -88,7 +88,7 @@ export default class AddHouse extends PureComponent {
                        value={this.state.image} onChange={this.onImageChange} required/>
               </div>
               <div className="form-group">
-                <label htmlFor="inputPrice">Price</label>
+                <label htmlFor="inputPrice">Price/week</label>
                 <input type="number" className="form-control" id="inputPrice"
                        value={this.state.price} onChange={this.onPriceChange} required min={0}/>
               </div>

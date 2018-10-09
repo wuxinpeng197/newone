@@ -8,6 +8,8 @@ import Register from './pages/Register';
 import AddHouse from './pages/AddHouse';
 import HouseInformation from './pages/HouseInformation';
 import HouseDetail from './pages/HouseDetail';
+import About from './pages/About';
+import Help from './pages/Help';
 
 export default class App extends PureComponent {
   constructor (props) {
@@ -47,6 +49,8 @@ export default class App extends PureComponent {
               <ul className="nav navbar-nav">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/house-information">House Information</Link></li>
+                  <li><Link to="/about">About</Link></li>
+                  <li><Link to="/help">Help</Link></li>
               </ul>
 
               {
@@ -73,6 +77,8 @@ export default class App extends PureComponent {
             <Route path="/add-house" component={AddHouse}/>
             <Route path="/house-information" component={HouseInformation}/>
             <Route path="/house/:id" component={HouseDetail}/>
+              <Route path="/about" component={About}/>
+              <Route path="/help" component={Help}/>
           </div>
           <div className="pageFooter">
             <h5>House information website</h5>

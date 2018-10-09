@@ -30,6 +30,7 @@ router.post('/auth/register', (req, res) => {
     .then(doc => {
       res.sendStatus(200);
     })
+
     .catch(err => {
       console.error(err);
       if (err.code === 11000) {
