@@ -10,34 +10,30 @@ import HouseInformation from './pages/HouseInformation';
 import HouseDetail from './pages/HouseDetail';
 import About from './pages/About';
 import Help from './pages/Help';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import * as actions from './redux/actions';
 
-export default class App extends PureComponent {
-  constructor (props) {
-    super(props);
-    this.state = {
-      user: null,
-      loadingUser: true
-    };
-  }
-
-  componentWillMount = () => {
-    axios.post('/api/auth/current')
-      .then(res => {
-        const user = res.data;
-        window._user = user;
-        this.setState({user, loadingUser: false});
-      });
+class App extends PureComponent {
+  componentDidMount = () => {
+    // get current user in session if exist
+    this.props.actions.fetchUser();
   };
 
+  /**
+   * do user logout
+   */
   onLogout = () => {
     axios.post('/api/auth/logout')
       .then(res => {
+        // redirect to homepage
         window.location.href = '/';
       });
   };
 
   render () {
-    if (this.state.loadingUser) {
+    const {loading, user} = this.props.user;
+    if (loading) {
       return <p>loading...</p>;
     }
 
@@ -49,20 +45,20 @@ export default class App extends PureComponent {
               <ul className="nav navbar-nav">
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/house-information">House Information</Link></li>
-                  <li><Link to="/about">About</Link></li>
-                  <li><Link to="/help">Help</Link></li>
+                <li><Link to="/about">About</Link></li>
+                <li><Link to="/help">Help</Link></li>
               </ul>
 
               {
-                renderIf(this.state.user)(
+                renderIf(user)(
                   <ul className="nav navbar-nav navbar-right">
-                    <p className="navbar-text">Signed in as {this.state.user && this.state.user.username}</p>
+                    <p className="navbar-text">Signed in as {user && user.username}</p>
                     <li><a role={'button'} onClick={this.onLogout}>Logout</a></li>
                   </ul>
                 )
               }
               {
-                renderIf(!this.state.user)(
+                renderIf(!user)(
                   <ul className="nav navbar-nav navbar-right">
                     <li><Link to="/login">Login</Link></li>
                   </ul>
@@ -77,8 +73,8 @@ export default class App extends PureComponent {
             <Route path="/add-house" component={AddHouse}/>
             <Route path="/house-information" component={HouseInformation}/>
             <Route path="/house/:id" component={HouseDetail}/>
-              <Route path="/about" component={About}/>
-              <Route path="/help" component={Help}/>
+            <Route path="/about" component={About}/>
+            <Route path="/help" component={Help}/>
           </div>
           <div className="pageFooter">
             <h5>House information website</h5>
@@ -95,3 +91,16 @@ export default class App extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {user} = state;
+  return {user};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: bindActionCreators(actions, dispatch)
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

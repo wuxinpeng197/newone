@@ -1,8 +1,9 @@
 import React, {PureComponent} from 'react';
 import axios from 'axios';
 import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import {connect} from 'react-redux';
 
-export default class AddHouse extends PureComponent {
+class AddHouse extends PureComponent {
   constructor (props) {
     super(props);
     this.state = {
@@ -12,8 +13,7 @@ export default class AddHouse extends PureComponent {
       address: '',
       contact: '',
       type: '', // apartment, house, studio,
-      redirectToHome: false,
-      user: window._user
+      redirectToHome: false
     };
   }
 
@@ -41,16 +41,24 @@ export default class AddHouse extends PureComponent {
     this.setState({type: event.target.value});
   };
 
+  /**
+   * handle form submit
+   * @param event
+   */
   handleSubmit = (event) => {
+    // prevent browser default form submit action
     event.preventDefault();
+    // construct form data
     const data = new FormData();
     data.append('name', this.state.name);
     data.append('price', this.state.price);
     data.append('address', this.state.address);
     data.append('contact', this.state.contact);
     data.append('type', this.state.type);
+    // append image
     data.append('image', document.querySelector('#inputImage').files[0]);
 
+    // post form data to server by using `multipart/form-data` content type
     axios.post('/api/house/add', data, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -66,7 +74,8 @@ export default class AddHouse extends PureComponent {
   };
 
   render () {
-    if (this.state.redirectToHome || !this.state.user) {
+    const {user} = this.props.user;
+    if (this.state.redirectToHome || !user) {
       return <Redirect to={'/'}/>;
     }
 
@@ -122,3 +131,10 @@ export default class AddHouse extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {user} = state;
+  return {user};
+};
+
+export default connect(mapStateToProps)(AddHouse);

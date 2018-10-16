@@ -1,14 +1,14 @@
 import React, {PureComponent} from 'react';
 import {renderIf} from '../utils/commonUtils';
 import axios from 'axios';
-import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
+import {connect} from 'react-redux';
 
-export default class HouseDetail extends PureComponent {
+class HouseDetail extends PureComponent {
   constructor (props) {
     super(props);
     this.state = {
       loading: false,
-      user: window._user,
       data: {},
       fav: false
     };
@@ -19,8 +19,12 @@ export default class HouseDetail extends PureComponent {
     this.checkFav();
   };
 
+  /**
+   * check if current user have favourite this house
+   */
   checkFav = () => {
-    if (this.state.user) {
+    const {user} = this.props.user;
+    if (user) {
       axios.post('/api/house/check-fav', {
         houseId: this.props.match.params.id
       })
@@ -33,8 +37,12 @@ export default class HouseDetail extends PureComponent {
     }
   };
 
+  /**
+   * Add or cancel favourite
+   */
   toggleFav = () => {
-    if (this.state.user) {
+    const {user} = this.props.user;
+    if (user) {
       axios.post('/api/house/toggle-fav', {
         houseId: this.props.match.params.id
       })
@@ -47,8 +55,12 @@ export default class HouseDetail extends PureComponent {
     }
   };
 
+  /**
+   * fetch house detail information
+   */
   fetchData = () => {
-    if (this.state.user) {
+    const {user} = this.props.user;
+    if (user) {
       this.setState({loading: true});
       axios.get('/api/house/detail', {
         params: {
@@ -66,7 +78,8 @@ export default class HouseDetail extends PureComponent {
   };
 
   render () {
-    if (!this.state.user) {
+    const {user} = this.props.user;
+    if (!user) {
       return <Redirect to={'/login'}/>;
     }
 
@@ -121,3 +134,10 @@ export default class HouseDetail extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {user} = state;
+  return {user};
+};
+
+export default connect(mapStateToProps)(HouseDetail);

@@ -20,7 +20,12 @@ export default class Register extends PureComponent {
     this.setState({password: event.target.value});
   };
 
+  /**
+   * handle user submit
+   * @param event
+   */
   handleSubmit = (event) => {
+    // prevent browser default form submit action
     event.preventDefault();
     axios.post('/api/auth/register', {
       username: this.state.username,
@@ -28,6 +33,7 @@ export default class Register extends PureComponent {
     })
       .then(res => {
         alert('Sign up success.');
+        // redirect to login page
         this.setState({redirectToLogin: true});
       })
       .catch(err => {

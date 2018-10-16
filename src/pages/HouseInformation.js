@@ -1,20 +1,21 @@
 import React, {PureComponent} from 'react';
 import {renderIf} from '../utils/commonUtils';
 import axios from 'axios';
-import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
+import HouseTemplate from '../components/HouseTemplate';
+import {connect} from 'react-redux';
 
-export default class HouseInformation extends PureComponent {
-  pageSize = 10;
+class HouseInformation extends PureComponent {
+  pageSize = 10; // 10 items per page
 
   constructor (props) {
     super(props);
     this.state = {
       loading: false,
-      user: window._user,
       houses: [],
-      page: 0,
-      total: 0,
-      sort: -1
+      page: 0, // 0-based current page
+      total: 0, // total houses number
+      sort: -1 // -1: price desc, 1: price asc
     };
   }
 
@@ -22,8 +23,12 @@ export default class HouseInformation extends PureComponent {
     this.fetchData();
   };
 
+  /**
+   * get houses data by page and sort
+   */
   fetchData = () => {
-    if (this.state.user) {
+    const {user} = this.props.user;
+    if (user) {
       this.setState({loading: true});
       axios.get('/api/house/list', {
         params: {
@@ -42,18 +47,28 @@ export default class HouseInformation extends PureComponent {
     }
   };
 
+  /**
+   * change page then fetchData
+   * @param page
+   */
   onPageChange = (page) => {
     if (page !== this.state.page) {
       this.setState({page}, this.fetchData);
     }
   };
 
+  /**
+   * toggle sort to price desc then fetchData
+   */
   toggleSortDesc = () => {
     if (this.state.sort !== -1) {
       this.setState({sort: -1, page: 0}, this.fetchData);
     }
   };
 
+  /**
+   * toggle sort to price asc then fetchData
+   */
   toggleSortAsc = () => {
     if (this.state.sort !== 1) {
       this.setState({sort: 1, page: 0}, this.fetchData);
@@ -61,7 +76,8 @@ export default class HouseInformation extends PureComponent {
   };
 
   render () {
-    if (!this.state.user) {
+    const {user} = this.props.user;
+    if (!user) {
       return <Redirect to={'/login'}/>;
     }
 
@@ -104,23 +120,7 @@ export default class HouseInformation extends PureComponent {
             {
               renderIf(!this.state.loading)(
                 this.state.houses.map(v => (
-                  <div key={v._id} className="card">
-                    <div>
-                      <h4>{v.name}</h4>
-                    </div>
-                    <div className={'clearfix'}>
-                      <div className={'pull-left'}>
-                        <p>
-                          <img src={'/public/uploads/' + v.image} style={{width: 100, height: 100}}/>
-                        </p>
-                      </div>
-                      <div className={'pull-left'} style={{marginLeft: 20}}>
-                        <p>Price: {v.price}</p>
-                        <p>Created: {new Date(v.createTime).toLocaleString()}</p>
-                        <Link to={'/house/' + v._id}>View Detail...</Link>
-                      </div>
-                    </div>
-                  </div>
+                  <HouseTemplate key={v._id} data={v}/>
                 ))
               )
             }
@@ -130,3 +130,10 @@ export default class HouseInformation extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {user} = state;
+  return {user};
+};
+
+export default connect(mapStateToProps)(HouseInformation);

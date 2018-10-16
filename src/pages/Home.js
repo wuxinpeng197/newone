@@ -1,24 +1,28 @@
 import React, {PureComponent} from 'react';
 import {renderIf} from '../utils/commonUtils';
 import axios from 'axios';
-import {BrowserRouter as Router, Route, Link, Redirect} from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
 
-export default class Home extends PureComponent {
+class Home extends PureComponent {
   constructor (props) {
     super(props);
     this.state = {
-      user: window._user,
       houses: [],
       favHouses: []
     };
   }
 
   componentDidMount = () => {
-    if (this.state.user) {
+    const {user} = this.props.user;
+    // fetch data if user exist
+    if (user) {
+      // get houses create by user
       axios.get('/api/house/list-mine')
         .then(res => {
           this.setState({houses: res.data});
         });
+      // get favourite houses added by user
       axios.get('/api/house/list-favs')
         .then(res => {
           this.setState({favHouses: res.data});
@@ -27,10 +31,11 @@ export default class Home extends PureComponent {
   };
 
   render () {
+    const {user} = this.props.user;
     return (
       <div className={'homepage'}>
         {
-          renderIf(this.state.user)(
+          renderIf(user)(
             <div className="container">
               <div className="row">
                 <div className="col-xs-12">
@@ -94,3 +99,10 @@ export default class Home extends PureComponent {
     );
   }
 }
+
+const mapStateToProps = state => {
+  const {user} = state;
+  return {user};
+};
+
+export default connect(mapStateToProps)(Home);

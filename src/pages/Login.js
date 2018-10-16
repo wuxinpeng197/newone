@@ -19,13 +19,19 @@ export default class Login extends PureComponent {
     this.setState({password: event.target.value});
   };
 
+  /**
+   * handle user submit
+   * @param event
+   */
   handleSubmit = (event) => {
+    // prevent browser default form submit action
     event.preventDefault();
     axios.post('/api/auth/login', {
       username: this.state.username,
       password: this.state.password
     })
       .then(res => {
+        // redirect to home page
         window.location.href = '/';
       })
       .catch(err => {
